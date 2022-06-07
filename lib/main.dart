@@ -58,16 +58,32 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
+    return Container(
+
+        decoration:  BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/images/Screenshot (121).png'),
-            fit: BoxFit.cover
+              image: const AssetImage('assets/images/Screenshot (121).png'),
+              fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(Colors.lightBlueAccent.withOpacity(0.2), BlendMode.darken),
+              
 
           ),
         ),
+      child:  Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: const Text('MemeClassifier App'),
+          centerTitle: true,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(onPressed: (){}, child: const Text('Get Started')),
+            ],
+          ),
+        ),
       ),
-    );
+      );
   }
 }

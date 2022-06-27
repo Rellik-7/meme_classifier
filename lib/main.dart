@@ -2,7 +2,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:meme_classifier/IndexPage.dart';
 
-import 'package:meme_classifier/photo_manager.dart';
+import 'package:meme_classifier/Gallery.dart';
 
 void main() {
   runApp(const MyApp());

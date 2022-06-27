@@ -1,5 +1,8 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:meme_classifier/IndexPage.dart';
+
+import 'package:meme_classifier/photo_manager.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,6 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Meme Classifier App',
       theme: ThemeData(
         // This is the theme of your application.
@@ -32,16 +36,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -63,9 +57,10 @@ class _MyHomePageState extends State<MyHomePage> {
       padding: const EdgeInsets.only(bottom: 1.0),
       child: Container(
 
-          decoration:  BoxDecoration(
+        decoration:  BoxDecoration(
             image: DecorationImage(
-                image: const AssetImage('assets/images/Screenshot (121).png'),
+              image: const AssetImage('assets/images/Screenshot (121).png'),
+
                 fit: BoxFit.cover,
               colorFilter: ColorFilter.mode(Colors.lightBlueAccent.withOpacity(0.2), BlendMode.darken),
 
@@ -79,7 +74,8 @@ class _MyHomePageState extends State<MyHomePage> {
             title: const Text('MemeClassifier App'),
             centerTitle: true,
           ),
-          body: Center(
+          body:SafeArea(
+          child: Center(
 
 
             child: Padding(
@@ -90,13 +86,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   AnimatedTextKit(animatedTexts: [
                    WavyAnimatedText('Welcome',textStyle: const TextStyle(fontSize: 30,fontStyle: FontStyle.italic)),
 
-                    
+
                   ]),
 
-                  ElevatedButton(onPressed: (){}, child: const Text('Get Started ->')),
+                  ElevatedButton(onPressed: (){
+                     Navigator.push(context, MaterialPageRoute(builder: (context) => const IndexPage()));
+                  }, child: const Text('Get Started ->')),
                 ],
               ),
             ),
+          ),
           ),
         ),
         ),

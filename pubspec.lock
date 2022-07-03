@@ -364,6 +364,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.9"
+  tflite:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: master
+      resolved-ref: "08c3df135fd5dbb6de21482d6247ec9ce7f81ee4"
+      url: "https://github.com/zhengbomo/flutter_tflite.git"
+    source: git
+    version: "1.1.2"
   typed_data:
     dependency: transitive
     description:

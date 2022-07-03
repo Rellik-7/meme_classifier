@@ -34,6 +34,10 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  tflite:
+    git:
+      url: https://github.com/zhengbomo/flutter_tflite.git
+      ref: master
   animated_text_kit: ^4.2.2
   image_picker: ^0.8.5+3
   photo_manager: ^2.1.4
@@ -72,6 +76,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/Screenshot (121).png
+    - assets/models/mobilenetv2_preprocessed_model_adam_20epoch_addedall.tflite
+    - assets/models/memelabels.txt
 
   # To add assets to your application, add an assets section, like this:
   # assets:

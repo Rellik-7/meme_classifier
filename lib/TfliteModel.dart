@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tflite/tflite.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class TfliteModel extends StatefulWidget {
   const TfliteModel({Key? key}) : super(key: key);
@@ -49,6 +50,26 @@ class _TfliteModelState extends State<TfliteModel> {
     });
   }
 
+  Future<void> deleteFile(File file) async {
+    try {
+      if (await file.exists()) {
+        await file.delete();
+      }
+    } catch (e) {
+      print("Error in accessing file");
+    }
+  }
+
+  void showToast() {
+    Fluttertoast.showToast(
+        msg: 'Image Deleted',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.yellow
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,6 +81,7 @@ class _TfliteModelState extends State<TfliteModel> {
           (imageSelect)
               ? Container(
                   margin: const EdgeInsets.all(10),
+                  height: 400,
                   child: Image.file(_image),
                 )
               : Container(
@@ -94,7 +116,20 @@ class _TfliteModelState extends State<TfliteModel> {
                     }).toList()
                   : [],
             ),
-          )
+          ),
+          (imageSelect) ? Container(
+            child: Center(
+              child: ElevatedButton(
+                onPressed: (){
+                  print(_image.path);
+                  deleteFile(_image);
+                  showToast();
+                  Navigator.pop(context);
+                },
+                child: Text('Delete image'),
+              ),
+            ),
+          ) : Container(),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -110,6 +145,9 @@ class _TfliteModelState extends State<TfliteModel> {
     final XFile? pickedFile = await _picker.pickImage(
       source: ImageSource.gallery,
     );
+    print(pickedFile!.path);
+    // FilePickerResult? pickedFilePath = await FilePicker.platform.pickFiles(type: FileType.image);
+    // print(pickedFilePath!.files.single.path!);
     File image = File(pickedFile!.path);
     imageClassification(image);
   }

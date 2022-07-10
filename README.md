@@ -8,7 +8,7 @@ The meme classifier app is built using Flutter, and integrated with a ML Model w
 
 
 
-# Screens
+## Screens
 
 Welcome Screen             |Gallery Screen            |Meme Classifiied          
 :-------------------------:|:-------------------------:|:-------------------------:

@@ -1,6 +1,6 @@
 # Meme_classifier
 
-An App is integrated with the ML Model which classify images into memes and non memes.
+The meme classifier app is built using Flutter, and integrated with a ML Model which can classify images into memes and non-memes. The app can import all the images from the gallery, and the user can choose the images e wants to classsify. After classification, the user can delete the images from his phone gallery
 
 ## app name- meme_classifier
 ## package name- com.example.meme_classifier

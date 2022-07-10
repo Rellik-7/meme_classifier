@@ -1,16 +1,11 @@
-# meme_classifier
+# Meme_classifier
 
-A new Flutter project.
+An App is integrated with the ML Model which classify images into memes and non memes.
 
-## Getting Started
+## app name- meme_classifier
+## package name- com.example.meme_classifier
+## packages used -  photo_manager
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Screens

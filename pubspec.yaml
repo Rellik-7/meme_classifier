@@ -49,8 +49,7 @@ dependencies:
   video_player: ^2.1.14
   fluttertoast: ^8.0.9
   google_fonts: ^3.0.1
-  permission_handler: ^3.0.0
-  icon_forest: ^1.1.8
+  permission_handler: ^10.0.0
 
 
 
@@ -80,7 +79,7 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - assets/images/Screenshot (121).png
+    - assets/images/Background.png
     - assets/models/mobilenetv2_preprocessed_model_adam_20epoch_addedall.tflite
     - assets/models/memelabels.txt
 

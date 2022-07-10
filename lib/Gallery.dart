@@ -1,7 +1,9 @@
 import 'dart:typed_data';
-
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:meme_classifier/TfliteModel2.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:photo_manager/photo_manager.dart';
 
@@ -18,9 +20,11 @@ class GridGallery extends StatefulWidget {
 }
 
 class _GridGalleryState extends State<GridGallery> {
-  final List<Widget> _mediaList = [];
+  final List<Map> _mediaList = [];
+  bool isloading = false;
   int currentPage = 0;
   int? lastPage;
+  int no_of_selected = 0;
 
   @override
   void initState() {
@@ -43,50 +47,49 @@ class _GridGalleryState extends State<GridGallery> {
       // success
 //load the album list
       List<AssetPathEntity> albums =
-      await PhotoManager.getAssetPathList(
-          onlyAll: true);
-      if (kDebugMode) {
-        print(albums);
-      }
-      List<AssetEntity> media =
-      await albums[0].getAssetListPaged(size: 60, page: currentPage); //preloading files
-      if (kDebugMode) {
-        print(media);
-      }
-      List<Widget> temp = [];
+      await PhotoManager.getAssetPathList(onlyAll: true);
+      // print(albums);
+      // if (kDebugMode) {
+
+      // }
+      List<AssetEntity> media = await albums[0]
+          .getAssetListPaged(size: 60, page: currentPage); //preloading files
+      // if (kDebugMode) {
+      //   print(media);
+      // }
+      List<Map> temp = [];
       for (var asset in media) {
-        temp.add(
-          FutureBuilder(
-            future: asset.thumbnailDataWithSize(const ThumbnailSize(200, 200)), //resolution of thumbnail
-            builder:
-                (BuildContext context, AsyncSnapshot<Uint8List?> snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return Stack(
-                  children: <Widget>[
-                    Positioned.fill(
-                      child: Image.memory(
-                        snapshot.data!,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    if (asset.type == AssetType.video)
-                      const Align(
-                        alignment: Alignment.bottomRight,
-                        child: Padding(
-                          padding: EdgeInsets.only(right: 5, bottom: 5),
-                          child: Icon(
-                            Icons.videocam,
-                            color: Colors.white,
-                          ),
+        if (asset.type != AssetType.video) {
+          temp.add({
+            'widget': FutureBuilder(
+              future:
+              asset.thumbnailDataWithSize(const ThumbnailSize(200, 200)),
+              //resolution of thumbnail
+              builder:
+                  (BuildContext context, AsyncSnapshot<Uint8List?> snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return Stack(
+                    children: <Widget>[
+                      Positioned.fill(
+                        child: Image.memory(
+                          snapshot.data!,
+                          fit: BoxFit.cover,
                         ),
                       ),
-                  ],
-                );
-              }
-              return Container();
-            },
-          ),
-        );
+                    ],
+                  );
+                }
+                return Container();
+              },
+            ),
+            'selected': false,
+            'file': await asset.file,
+            'path': asset.relativePath,
+            'id': asset.id,
+            'confidence_score': 0,
+            'ismeme': false
+          });
+        }
       }
       setState(() {
         _mediaList.addAll(temp);
@@ -94,33 +97,105 @@ class _GridGalleryState extends State<GridGallery> {
       });
     } else {
       // fail
-       PhotoManager.openSetting();
+      PhotoManager.openSetting();
+
       /// if result is fail, you can call `PhotoManager.openSetting();`  to open android/ios applicaton's setting to get permission
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text('Gallary'),
         centerTitle: true,
       ),
       body: NotificationListener<ScrollNotification>(
-          onNotification: (ScrollNotification scroll) {
-            _handleScrollEvent(scroll);
-            return false;
-          },
-
-      child: GridView.builder(
+        onNotification: (ScrollNotification scroll) {
+          _handleScrollEvent(scroll);
+          return false;
+        },
+        child: _mediaList.isEmpty || isloading == true
+            ? const Center(child: CircularProgressIndicator())
+            : GridView.builder(
           controller: widget.scrollCtr,
           itemCount: _mediaList.length,
-          gridDelegate:
-          const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3),
           itemBuilder: (BuildContext context, int index) {
-            return _mediaList[index];
-          }),
+            return InkWell(
+              child: Stack(
+                children: [
+                  Opacity(
+                    child: _mediaList[index]['widget'],
+                    opacity:
+                    _mediaList[index]['selected'] == true ? 0.5 : 1,
+                  ),
+                  Center(
+                      child: Container(
+                          child: _mediaList[index]['selected'] == true
+                              ? Icon(Icons.check, size: 30)
+                              : null))
+                ],
+              ),
+              onTap: () {
+                setState(() {
+                  _mediaList[index]['selected'] == false
+                      ? no_of_selected++
+                      : no_of_selected--;
+                  _mediaList[index]['selected'] =
+                  !_mediaList[index]['selected'];
+                });
+              },
+            );
+          },
+        ),
       ),
+      floatingActionButton: no_of_selected != 0
+          ? FloatingActionButton(
+        child: Text('Check if Meme'),
+        onPressed: () async {
+          setState(() {
+            isloading = true;
+          });
+
+          List<Map> _selectedlist = [];
+          _mediaList.forEach(
+                (element) {
+              if (element['selected']) {
+                _selectedlist.add(element);
+              }
+            },
+          );
+          print(_selectedlist);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  TfliteModel(selectedlist: _selectedlist),
+            ),
+          );
+
+          // final List<String> result = await PhotoManager.editor.deleteWithIds([_selectedlist[0]['id']]);
+          // print(result);
+          // try {
+          //   print('A');
+          //   Directory? dir = await getExternalStorageDirectory();
+          //   print(dir?.path);
+          //   final targetFile = Directory("${dir?.path}/${_selectedlist[0]['path']}");
+          //   if(targetFile.existsSync()) {
+          //     targetFile.deleteSync(recursive: true);
+          //   }
+          // } catch (e) {
+          //   print(e);
+          // }
+
+          setState(() {
+            isloading = false;
+          });
+        },
+      )
+          : null,
     );
   }
 }

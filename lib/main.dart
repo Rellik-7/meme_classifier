@@ -1,7 +1,8 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:meme_classifier/IndexPage.dart';
-
+import 'package:permission_handler/permission_handler.dart';
 import 'package:meme_classifier/Gallery.dart';
 
 void main() {
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.lightBlue,
       ),
-      home: const MyHomePage(title: 'Meme Classifier App' ),
+      home: const MyHomePage(title: 'Meme Classifier App'),
     );
   }
 }
@@ -43,7 +44,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
+  bool isloading = true;
 
   @override
   Widget build(BuildContext context) {
@@ -53,52 +54,81 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Padding(
+    return isloading
+        ? Center(child: Text('Loading...'))
+        : Padding(
       padding: const EdgeInsets.only(bottom: 1.0),
       child: Container(
-
-        decoration:  BoxDecoration(
-            image: DecorationImage(
-              image: const AssetImage('assets/images/Screenshot (121).png'),
-
-                fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(Colors.lightBlueAccent.withOpacity(0.2), BlendMode.darken),
-
-
-            ),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: const AssetImage('assets/images/Screenshot (121).png'),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+                Colors.lightBlueAccent.withOpacity(0.2),
+                BlendMode.darken),
           ),
-
-        child:  Scaffold(
+        ),
+        child: Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            title: const Text('MemeClassifier App'),
-            centerTitle: true,
-          ),
-          body:SafeArea(
-          child: Center(
-
-
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 200.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AnimatedTextKit(animatedTexts: [
-                   WavyAnimatedText('Welcome',textStyle: const TextStyle(fontSize: 30,fontStyle: FontStyle.italic)),
-
-
-                  ]),
-
-                  ElevatedButton(onPressed: (){
-                     Navigator.push(context, MaterialPageRoute(builder: (context) => const IndexPage()));
-                  }, child: const Text('Get Started ->')),
-                ],
+          // appBar: AppBar(
+          //   title: const Text('MemeClassifier App'),
+          //   centerTitle: true,
+          // ),
+          body: SafeArea(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 200.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'MEME ClASSIFIER APP',
+                      style: GoogleFonts.bangers(
+                        textStyle: const TextStyle(
+                            color: Colors.blue, letterSpacing: .5),
+                        fontSize: MediaQuery.of(context).size.width / 7,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 30),
+                    ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                  const IndexPage()));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: const Size(150, 150),
+                          shape: const CircleBorder(),
+                        ),
+                        child: Text('Proceed')),
+                  ],
+                ),
               ),
             ),
           ),
-          ),
         ),
-        ),
+      ),
     );
+  }
+
+  @override
+  void initState() {
+    initiateApp();
+  }
+
+  Future<void> initiateApp() async {
+    final PermissionHandler _permissionHandler = PermissionHandler();
+    var result =
+    await _permissionHandler.requestPermissions([PermissionGroup.storage]);
+    if (result[PermissionGroup.storage] == PermissionStatus.granted) {
+      print('granted');
+      setState(() {
+        isloading = false;
+      });
+    }
   }
 }

@@ -15,7 +15,7 @@ class _IndexPageState extends State<IndexPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text('Index Page'),
+        title: Text('Index Page'),
       ),
       body:Column(
         mainAxisAlignment: MainAxisAlignment.center,
